@@ -1,13 +1,16 @@
 from aiogram import types
 from . app import dp, bot
 from . messages import MESSAGES
+from  . keyboards import in_kb_main_menu
 from .states import TestStates, DeskriptionStates
 import aiogram.utils.markdown as fmt
 
 
 @dp.message_handler(commands=['start'], state="*")
 async def process_start_command(message: types.Message):
-    await message.reply(MESSAGES['start'])
+    await message.reply(MESSAGES['start'], reply_markup=in_kb_main_menu)
+    state = dp.current_state(user=message.from_user.id)
+    await state.update_data(word=message.text.lower(), user_id=message.from_user.id)
 
 """
 @dp.message_handler(commands=['start'], state=TestStates.TEST_STATE_3 | TestStates.TEST_STATE_4 | TestStates.TEST_STATE_5)

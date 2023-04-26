@@ -4,7 +4,7 @@ from . app import dp, bot
 from aiogram.dispatcher import FSMContext
 from . states import TestStates, DeskriptionStates, TranslateModeStates
 from . data_fetcher import add_word, del_word
-from . keyboards import inline_kb_YN, inline_kb_chancel, inline_kb_exit
+from . keyboards import inline_kb_YN, inline_kb_chancel, inline_kb_exit, in_kb_main_menu
 import aiogram.utils.markdown as fmt
 from emoji import emojize
 
@@ -35,6 +35,9 @@ async def process_add_word_setstate_command(message: types.Message):
         )
     await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML")
     await bot.send_message(message.from_user.id, text=emojize('➡ Введите слово!'), reply_markup=inline_kb_exit)
+
+
+
 
 
 
@@ -138,7 +141,7 @@ async def button_exit_click_call_back(callback_query: types.CallbackQuery, state
     msg_text = fmt.text(fmt.text("\nСообщение: ", fmt.hitalic("Вы вышли из режима перевода. Воспользуйтесь командами /end, /help или /start."),
                  sep="\n"))
 
-    await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML")
+    await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML", reply_markup=in_kb_main_menu)
 
 
 @dp.callback_query_handler(lambda c: c.data in ['chancel'], state=[TranslateModeStates.input_translation, TranslateModeStates.input_word])
@@ -146,6 +149,34 @@ async def button_exit_click_call_back(callback_query: types.CallbackQuery, state
     data = await state.get_data()
     await bot.send_message(data['user_id'], text=emojize('➡ Введите слово!'))
     await state.set_state(TranslateModeStates.input_word)
+
+
+@dp.callback_query_handler(lambda c: c.data in ['translater'], state="*")
+async def button_translater_click_call_back(callback_query: types.CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    await state.set_state(TranslateModeStates.input_word)
+    try:
+        msg_text = fmt.text(
+            fmt.text(fmt.hunderline("State"),
+                     "=",
+                     await state.get_state(),
+                     "=",
+                     DeskriptionStates[await state.get_state()]),
+            fmt.text("\nСообщение: ",
+                     fmt.hitalic(
+                         "Вы вошли в режим переводчика. В нем вы будете находиться, пока не не выполните команду /end, /help или /start."),
+                     sep="\n")
+        )
+    except:
+        msg_text = fmt.text(
+            fmt.text(
+                     fmt.hitalic(
+                         "Вы вошли в режим переводчика. В нем вы будете находиться, пока не не выполните команду /end, /help или /start."),
+                     sep="\n")
+        )
+
+    await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML")
+    await bot.send_message(chat_id=data['user_id'], text=emojize('➡ Введите слово!'), reply_markup=inline_kb_exit)
 
 
 

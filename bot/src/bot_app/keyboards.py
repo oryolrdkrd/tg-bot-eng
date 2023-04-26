@@ -115,3 +115,9 @@ inline_kb_chancel.add(inline_button_chancel, inline_button_exit)
 #Клавиатура с кнопкой "Закончить"
 inline_kb_exit = InlineKeyboardMarkup()
 inline_kb_exit.add(inline_button_exit)
+
+#Клавиатура основного меню
+in_btn_mainmenu_translater = InlineKeyboardButton('Переводчик', callback_data='translater')
+in_btn_mainmenu_game10 = InlineKeyboardButton('Игра 10 случайных слов', callback_data='game10')
+in_kb_main_menu = InlineKeyboardMarkup()
+in_kb_main_menu.add(in_btn_mainmenu_translater, in_btn_mainmenu_game10)
