@@ -1,26 +1,15 @@
-#это логика пустой реакции на текст
-#TODO: установить нормальную логику
 from aiogram import types
-from aiogram.dispatcher.filters import CommandStart
-from aiogram.types import ContentType
 from . app import dp, bot
 from . messages import MESSAGES
 from .states import TestStates, DeskriptionStates
 import aiogram.utils.markdown as fmt
-from aiogram.utils.emoji import emojize
-from aiogram.utils.markdown import text, bold, italic, code, pre
-from aiogram.types import ParseMode, InputMediaPhoto, InputMediaVideo, ChatActions
-from aiogram.utils import executor
 
-from . import messages
-from . keyboards import inline_kb
-from . states import GameStates
-from . data_fetcher import get_random
-from aiogram.dispatcher import FSMContext
 
 @dp.message_handler(commands=['start'], state="*")
 async def process_start_command(message: types.Message):
     await message.reply(MESSAGES['start'])
+
+"""
 @dp.message_handler(commands=['start'], state=TestStates.TEST_STATE_3 | TestStates.TEST_STATE_4 | TestStates.TEST_STATE_5)
 async def process_start_command(message: types.Message):
     await message.reply(MESSAGES['start'])
@@ -36,13 +25,9 @@ async def process_start_command(message: types.Message):
     )
 
     await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML")
+"""
 
-
-@dp.message_handler(commands=['help'])
-async def process_help_command(message: types.Message):
-    await message.reply(MESSAGES['help'])
-
-@dp.message_handler(commands=['help'], state=TestStates.TEST_STATE_4)
+@dp.message_handler(commands=['help'], state="*")
 async def process_help_command(message: types.Message):
     await message.reply(MESSAGES['help'])
 
