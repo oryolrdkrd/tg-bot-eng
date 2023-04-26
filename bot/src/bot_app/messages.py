@@ -49,11 +49,6 @@ translater_mode_message = 'Вы вошли в режим Переводчика.
                           'слова нет, то вам будет предложено его добавить.'
 translater_mode_input_word_msg = "➡ Переводчик: *Введите __СЛОВО__*\!"
 translater_mode_input_translation_msg = "➡ Переводчик: *Введите __ПЕРЕВОД__ слова*\!"
-change_word_msg = "_Что конкретно вы хотите изменить_\? \u2694\ufe0f \n" \
-                "\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \n" \
-                "*Слово\:*\ \n" \
-                "_или_\ \n" \
-                "*Перевод\:*\ \. \n" \
 
 MESSAGES = {
     'start': start_message,
@@ -66,5 +61,4 @@ MESSAGES = {
     'translater_mode': translater_mode_message,
     'tm_in_w': translater_mode_input_word_msg,
     'tm_in_t': translater_mode_input_translation_msg,
-    'change_word': change_word_msg
 }

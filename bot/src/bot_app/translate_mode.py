@@ -54,6 +54,8 @@ async def process_add_word_add_translate_command(message: types.Message, state:F
                  sep="\n")
     )
 
+    await state.update_data(translation_base=decode_res['translation_base'])
+
     await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML")
     if decode_res['status'] == 1:
         #
@@ -171,9 +173,14 @@ async def button_translater_click_call_back(callback_query: types.CallbackQuery,
     data = await state.get_data()
     state = dp.current_state(user=data['user_id'])
     await state.set_state(TranslateModeStates.input_word)
-    # await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML")
-    await bot.send_message(chat_id=data['user_id'], text=MESSAGES['change_word'], reply_markup=in_kb_change_word)
 
+    msg_text = "_Что конкретно вы хотите изменить_\? \u2694\ufe0f \n" \
+            "`\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- `\n" \
+            f"*Слово*\: `{data['word']}` \n" \
+            "_или_\ \n" \
+            f"*Перевод*\: `{data['translation_base']}`  \n"
+
+    await bot.send_message(chat_id=data['user_id'], text=msg_text, reply_markup=in_kb_change_word)
 
 
 
