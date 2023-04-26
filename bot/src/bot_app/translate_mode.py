@@ -72,8 +72,9 @@ async def process_add_word_add_translate_command(message: types.Message, state:F
     decode_res = json.loads(res)
 
     msg_text = fmt.text(
-        fmt.text(fmt.hunderline("Статус"), "=", decode_res['status']),
-        fmt.text("\nСообщение: ", fmt.hitalic(decode_res['msg']),
+        # fmt.text(fmt.hunderline("Статус"), "=", decode_res['status']),
+        # fmt.text("\nСообщение: ", fmt.hitalic(decode_res['msg']),
+        fmt.text(fmt.hitalic(decode_res['msg']),
         fmt.text(fmt.hbold(decode_res['word']), "=", fmt.hbold(decode_res['translation_base'])),
         sep="\n")
     )
@@ -101,8 +102,9 @@ async def button_delete_click_call_back(callback_query: types.CallbackQuery, sta
 
 
     msg_text = fmt.text(
-            fmt.text(fmt.hunderline("Статус"), "=", decode_res['status']),
-            fmt.text("\nСообщение: ", fmt.hitalic(decode_res['msg']),
+            # fmt.text(fmt.hunderline("Статус"), "=", decode_res['status']),
+            # fmt.text("\nСообщение: ", fmt.hitalic(decode_res['msg']),
+            fmt.text(fmt.hitalic(decode_res['msg']),
                      fmt.text(fmt.hbold(decode_res['word']), "="),
                      sep="\n")
     )
@@ -125,7 +127,7 @@ async def button_go_click_call_back(callback_query: types.CallbackQuery, state:F
 async def button_exit_click_call_back(callback_query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     #await state.reset_state()
-    msg_text = fmt.text(fmt.text("\nСообщение: ", fmt.hitalic("Вы вышли из режима перевода. Воспользуйтесь командами /end, /help или /start."),
+    msg_text = fmt.text(fmt.text(fmt.hitalic("Вы вышли из режима перевода. Воспользуйтесь командами /help или /start."),
                  sep="\n"))
 
     await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML", reply_markup=in_kb_main_menu)
