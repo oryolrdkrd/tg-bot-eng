@@ -111,3 +111,7 @@ inline_kb_YN.add(inline_button_change, inline_button_delete, inline_button_go, i
 inline_button_chancel = InlineKeyboardButton('✖ Отменить', callback_data='chancel')
 inline_kb_chancel = InlineKeyboardMarkup()
 inline_kb_chancel.add(inline_button_chancel, inline_button_exit)
+
+#Клавиатура с кнопкой "Закончить"
+inline_kb_exit = InlineKeyboardMarkup()
+inline_kb_exit.add(inline_button_exit)
