@@ -47,7 +47,8 @@ current_state_message = 'Текущее состояние - "{current_state}":"
 add_word_message = emojize(':right_arrow: Введите английское слово:')
 translater_mode_message = 'Вы вошли в режим Переводчика. Работает он так: вы вводите слово и получаете его перевод, если такого ' \
                           'слова нет, то вам будет предложено его добавить.'
-translater_mode_input_word = "➡ Переводчик: *Введите слово*\!"
+translater_mode_input_word = "➡ Переводчик: *Введите __СЛОВО__*\!"
+translater_mode_input_translation = "➡ Переводчик: *Введите __ПЕРЕВОД__ слова*\!"
 
 MESSAGES = {
     'start': start_message,
@@ -58,5 +59,6 @@ MESSAGES = {
     'current_state': current_state_message,
     'add_word': add_word_message,
     'translater_mode': translater_mode_message,
-    'tm_in_w': translater_mode_input_word
+    'tm_in_w': translater_mode_input_word,
+    'tm_in_t': translater_mode_input_translation
 }

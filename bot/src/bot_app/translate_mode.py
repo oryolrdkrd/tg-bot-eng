@@ -52,10 +52,10 @@ async def process_add_word_add_translate_command(message: types.Message, state:F
 
     await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML")
     if decode_res['status'] == 1:
-        await bot.send_message(chat_id=message.from_user.id, text=f"-> Вы можете сделать:", reply_markup=inline_kb_YN)
+        await bot.send_message(chat_id=message.from_user.id, text=f"\-\> Вы можете сделать:", reply_markup=inline_kb_YN)
         await state.set_state(TranslateModeStates.choosing_edit_mode)
     else:
-        await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_w'], reply_markup=inline_kb_chancel)
+        await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_t'], reply_markup=inline_kb_chancel)
         await state.set_state(TranslateModeStates.input_translation)
 
 
@@ -82,7 +82,7 @@ async def process_add_word_add_translate_command(message: types.Message, state:F
         await bot.send_message(chat_id=message.from_user.id, text=f"-> Вы можете сделать:", reply_markup=inline_kb_YN)
         await state.set_state(TranslateModeStates.choosing_edit_mode)
     else:
-        await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit)
+        await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_t'], reply_markup=inline_kb_exit)
         await state.set_state(TranslateModeStates.input_word)
 
 
@@ -111,7 +111,7 @@ async def button_delete_click_call_back(callback_query: types.CallbackQuery, sta
         await bot.send_message(chat_id=data['user_id'], text=f"-> Вы можете сделать:", reply_markup=inline_kb_YN)
         await state.set_state(TranslateModeStates.choosing_edit_mode)
 
-    await bot.send_message(data['user_id'], text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit, parse_mode='MarkdownV2')
+    await bot.send_message(data['user_id'], text=MESSAGES['tm_in_t'], reply_markup=inline_kb_exit, parse_mode='MarkdownV2')
     await state.set_state(TranslateModeStates.input_word)
 
 @dp.callback_query_handler(lambda c: c.data in ['go'], state=TranslateModeStates.choosing_edit_mode)
