@@ -121,3 +121,9 @@ in_btn_mainmenu_translater = InlineKeyboardButton('🇬🇧 Переводчик
 in_btn_mainmenu_game10 = InlineKeyboardButton('\U0001f51f Игра 10 случайных слов', callback_data='game10')
 in_kb_main_menu = InlineKeyboardMarkup()
 in_kb_main_menu.add(in_btn_mainmenu_translater, in_btn_mainmenu_game10)
+
+#Клавиатура изменения слова или перевода
+in_btn_change_word = InlineKeyboardButton('\u2694\ufe0f Слово', callback_data='change_word')
+in_btn_change_translation = InlineKeyboardButton('\u2694\ufe0f Перевод', callback_data='change_translation')
+in_kb_change_word = InlineKeyboardMarkup()
+in_kb_change_word.add(in_btn_change_word, in_btn_change_translation)

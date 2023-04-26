@@ -65,7 +65,7 @@ class AddWord(APIView):
             word = models.Words.objects.filter(Q(word=request.data['word'])).first()
             return Response({
                 'status': 1,
-                'msg': 'Такой объект уже существует',
+                'msg': 'Такое слово уже существует!',
                 'word': model_to_dict(word)["word"],
                 'translation_base': model_to_dict(word)["translation_base"]
             })

@@ -4,12 +4,18 @@ from . app import dp, bot
 from aiogram.dispatcher import FSMContext
 from . states import TestStates, DeskriptionStates, TranslateModeStates
 from . data_fetcher import add_word, del_word
-from . keyboards import inline_kb_YN, inline_kb_chancel, inline_kb_exit, in_kb_main_menu
+from . keyboards import inline_kb_YN, inline_kb_chancel, inline_kb_exit, in_kb_main_menu, in_kb_change_word
 import aiogram.utils.markdown as fmt
 from emoji import emojize
 from . messages import MESSAGES
 
+
+
+
 @dp.message_handler(state='*', commands=['t'])
+#
+#   Входим в режим переводчика. Предлагаем ввести слово
+#
 async def process_add_word_setstate_command(message: types.Message):
 
     state = dp.current_state(user=message.from_user.id)
@@ -25,13 +31,10 @@ async def process_add_word_setstate_command(message: types.Message):
 
 
 
-
-
-
-
-#Принимаем перевод слова и сбрасываем стейт в инит
-#'test_state_0': 'Начальное состояние инициации',
 @dp.message_handler(state=TranslateModeStates.input_word)
+#
+#   Получаем слово. Делаем запрос. Выводим перевод или предлагаем ввод перевода
+#
 async def process_add_word_add_translate_command(message: types.Message, state:FSMContext):
 
     #async with state.proxy() as data:
@@ -53,7 +56,10 @@ async def process_add_word_add_translate_command(message: types.Message, state:F
 
     await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML")
     if decode_res['status'] == 1:
-        await bot.send_message(chat_id=message.from_user.id, text=f"\-\> Вы можете сделать:", reply_markup=inline_kb_YN)
+        #
+        #   Если такое слово уже существет мы предлагаем меню с действиями
+        #
+        await bot.send_message(chat_id=message.from_user.id, text="➡️ _Вы можете сделать_\:", reply_markup=inline_kb_YN)
         await state.set_state(TranslateModeStates.choosing_edit_mode)
     else:
         await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_t'], reply_markup=inline_kb_chancel)
@@ -81,7 +87,7 @@ async def process_add_word_add_translate_command(message: types.Message, state:F
 
     await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML")
     if decode_res['status'] == 1:
-        await bot.send_message(chat_id=message.from_user.id, text=f"-> Вы можете сделать:", reply_markup=inline_kb_YN)
+        await bot.send_message(chat_id=message.from_user.id, text="➡️ _Вы можете сделать_\:", reply_markup=inline_kb_YN)
         await state.set_state(TranslateModeStates.choosing_edit_mode)
     else:
         await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit)
@@ -111,7 +117,7 @@ async def button_delete_click_call_back(callback_query: types.CallbackQuery, sta
 
     await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML")
     if decode_res['status'] == 0:
-        await bot.send_message(chat_id=data['user_id'], text=f"-> Вы можете сделать:", reply_markup=inline_kb_YN)
+        await bot.send_message(chat_id=data['user_id'], text="➡️ _Вы можете сделать_\:", reply_markup=inline_kb_YN)
         await state.set_state(TranslateModeStates.choosing_edit_mode)
 
     await bot.send_message(data['user_id'], text=MESSAGES['tm_in_t'], reply_markup=inline_kb_exit, parse_mode='MarkdownV2')
@@ -154,6 +160,19 @@ async def button_translater_click_call_back(callback_query: types.CallbackQuery,
 
     await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML")
     await bot.send_message(chat_id=data['user_id'], text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit)
+
+
+@dp.callback_query_handler(lambda c: c.data in ['change'], state="*")
+#
+#   Режим изменения слова или перевода
+#
+async def button_translater_click_call_back(callback_query: types.CallbackQuery, state: FSMContext):
+
+    data = await state.get_data()
+    state = dp.current_state(user=data['user_id'])
+    await state.set_state(TranslateModeStates.input_word)
+    # await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML")
+    await bot.send_message(chat_id=data['user_id'], text=MESSAGES['change_word'], reply_markup=in_kb_change_word)
 
 
 
