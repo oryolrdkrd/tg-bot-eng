@@ -44,8 +44,9 @@ async def process_add_word_add_translate_command(message: types.Message, state:F
     decode_res = json.loads(res)
 
     msg_text = fmt.text(
-        fmt.text(fmt.hunderline("Статус"), "=", decode_res['status']),
-        fmt.text("\nСообщение: ", fmt.hitalic(decode_res['msg']),
+        #fmt.text(fmt.hunderline("Статус"), "=", decode_res['status']),
+        #fmt.text("\nСообщение: ", fmt.hitalic(decode_res['msg']),
+        fmt.text("\n", fmt.hitalic(decode_res['msg']),
                  fmt.text(fmt.hbold(decode_res['word']), "=", fmt.hbold(decode_res['translation_base'])),
                  sep="\n")
     )
@@ -82,7 +83,7 @@ async def process_add_word_add_translate_command(message: types.Message, state:F
         await bot.send_message(chat_id=message.from_user.id, text=f"-> Вы можете сделать:", reply_markup=inline_kb_YN)
         await state.set_state(TranslateModeStates.choosing_edit_mode)
     else:
-        await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_t'], reply_markup=inline_kb_exit)
+        await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit)
         await state.set_state(TranslateModeStates.input_word)
 
 

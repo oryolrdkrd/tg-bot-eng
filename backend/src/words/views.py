@@ -62,7 +62,7 @@ class AddWord(APIView):
         #1 проверяем, есть ли такое слово в БД
         is_word = 1
         try:
-            word = models.Words.objects.filter(Q(word__icontains=request.data['word'])).first()
+            word = models.Words.objects.filter(Q(word=request.data['word'])).first()
             return Response({
                 'status': 1,
                 'msg': 'Такой объект уже существует',
