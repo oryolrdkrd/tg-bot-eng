@@ -110,4 +110,4 @@ inline_kb_YN.add(inline_button_change, inline_button_delete, inline_button_go, i
 #Клавиатура Да/Нет
 inline_button_chancel = InlineKeyboardButton('✖ Отменить', callback_data='chancel')
 inline_kb_chancel = InlineKeyboardMarkup()
-inline_kb_chancel.add(inline_button_chancel)
+inline_kb_chancel.add(inline_button_chancel, inline_button_exit)

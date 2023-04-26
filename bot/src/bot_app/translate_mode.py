@@ -1,18 +1,10 @@
 import json
-
 from aiogram import types
 from . app import dp, bot
-from . keyboards import inline_kb
-from . states import GameStates
-from . data_fetcher import get_random
 from aiogram.dispatcher import FSMContext
-from . messages import MESSAGES
 from . states import TestStates, DeskriptionStates, TranslateModeStates
-from . utils import GetCurrentState
 from . data_fetcher import add_word, del_word
 from . keyboards import inline_kb_YN, inline_kb_chancel
-from aiogram.utils.markdown import text, bold, italic, code, pre
-from aiogram.types import ParseMode, InputMediaPhoto, InputMediaVideo, ChatActions
 import aiogram.utils.markdown as fmt
 from emoji import emojize
 
@@ -73,10 +65,8 @@ async def process_add_word_add_translate_command(message: types.Message, state:F
         await bot.send_message(chat_id=message.from_user.id, text=f"-> Вы можете сделать:", reply_markup=inline_kb_YN)
         await state.set_state(TranslateModeStates.choosing_edit_mode)
     else:
-        await bot.send_message(message.from_user.id, text=emojize('➡ Введите перевод слова!'))
+        await bot.send_message(message.from_user.id, text=emojize('➡ Введите перевод слова!'), reply_markup=inline_kb_chancel)
         await state.set_state(TranslateModeStates.input_translation)
-        await bot.send_message(chat_id=data['user_id'], text=f"Отмена", reply_markup=inline_kb_chancel)
-        await state.set_state(TranslateModeStates.choosing_edit_mode)
 
 
 
@@ -140,7 +130,7 @@ async def button_go_click_call_back(callback_query: types.CallbackQuery, state:F
     await bot.send_message(data['user_id'], text=emojize('➡ Введите слово!'))
     await state.set_state(TranslateModeStates.input_word)
 
-@dp.callback_query_handler(lambda c: c.data in ['exit'], state=TranslateModeStates.choosing_edit_mode)
+@dp.callback_query_handler(lambda c: c.data in ['exit'], state=[TranslateModeStates.choosing_edit_mode, TranslateModeStates.input_translation])
 async def button_exit_click_call_back(callback_query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     await state.reset_state()
@@ -148,6 +138,13 @@ async def button_exit_click_call_back(callback_query: types.CallbackQuery, state
                  sep="\n"))
 
     await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML")
+
+
+@dp.callback_query_handler(lambda c: c.data in ['chancel'], state=TranslateModeStates.input_translation)
+async def button_exit_click_call_back(callback_query: types.CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    await bot.send_message(data['user_id'], text=emojize('➡ Введите слово!'))
+    await state.set_state(TranslateModeStates.input_word)
 
 
 
