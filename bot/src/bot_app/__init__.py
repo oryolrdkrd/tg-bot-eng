@@ -1,6 +1,6 @@
 import logging
 from . app import dp
-from . import utils, random_ten, add_word, initial_mes, translate_mode #выполнит инициализацию всех хендлеров
+from . import utils, random_ten, add_word, initial_mes, translate_mode, random_word #выполнит инициализацию всех хендлеров
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 
 #Включаем логирование на уровне INFO

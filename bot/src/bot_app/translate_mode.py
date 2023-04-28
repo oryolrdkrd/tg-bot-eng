@@ -122,7 +122,7 @@ async def button_delete_click_call_back(callback_query: types.CallbackQuery, sta
         await bot.send_message(chat_id=data['user_id'], text="➡️ _Вы можете сделать_\:", reply_markup=inline_kb_YN)
         await state.set_state(TranslateModeStates.choosing_edit_mode)
 
-    await bot.send_message(data['user_id'], text=MESSAGES['tm_in_t'], reply_markup=inline_kb_exit, parse_mode='MarkdownV2')
+    await bot.send_message(data['user_id'], text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit, parse_mode='MarkdownV2')
     await state.set_state(TranslateModeStates.input_word)
 
 @dp.callback_query_handler(lambda c: c.data in ['go'], state=TranslateModeStates.choosing_edit_mode)
