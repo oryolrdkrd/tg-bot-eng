@@ -127,58 +127,27 @@ class UpdateWord(APIView):
                     'msg': 'Слово исправлено!',
                     'word': model_to_dict(word)["word"],
                     'translation_base': model_to_dict(word)["translation_base"]})
-            else: pass
+            else:
+                #
+                #   Если прилетело редактирование перевода
+                #
+                word = models.Words.objects.filter(Q(word=request.data['word'])).first()
+                word.translation_base = request.data['translation_edit']
+                word.save()
+                word = models.Words.objects.filter(Q(word=request.data['word'])).first()
+                return Response({
+                    'status': 2,
+                    'msg': 'Перевод исправлен!',
+                    'word': model_to_dict(word)["word"],
+                    'translation_base': model_to_dict(word)["translation_base"]})
         except:
             return Response({
-                'status': 1,
+                'status': 3,
                 'msg': 'Ищи ошибку',
                 'word': '',
                 'translation_base': ''})
 
 
-
-
-
-
-            """
-            try:
-                word = models.Words.objects.filter(Q(word=request.data['word'])).first()
-                word['word'] = request.data['word_edit']
-                word.save()
-                word = models.Words.objects.filter(Q(word=request.data['word'])).first()
-                return Response({
-                    'status': 1,
-                    'msg': 'Слово исправлено!',
-                    'word': model_to_dict(word)["word"],
-                    'translation_base': model_to_dict(word)["translation_base"]
-                })
-            except:
-                if request.data['translation_base'] != '':
-                    word = models.Words.objects.create(
-                        word=request.data['word'],
-                        translation_base=request.data['translation_base'],
-                        user_id=request.data['user_id']
-                    )
-                    return Response({
-                        'status': 0,
-                        'msg': 'Слово успешно добавлено в словарь!',
-                        'word': model_to_dict(word)["word"],
-                        'translation_base': model_to_dict(word)["translation_base"]
-                    })
-                else:
-                    return Response({
-                        'status': 2,
-                        'msg': 'Этого слова нет!',
-                        'word': '',
-                        'translation_base': ''
-                    })
-                return Response({
-                    'status': 2,
-                    'msg': 'ЧТо-то непонятное!',
-                    'word': '',
-                    'translation_base': ''
-                })
-"""
 
 
 

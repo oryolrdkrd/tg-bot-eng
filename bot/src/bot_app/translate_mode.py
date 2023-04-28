@@ -196,6 +196,18 @@ async def cmd_change_word(message: types.Message, state:FSMContext):
                            parse_mode=types.ParseMode.MARKDOWN_V2)
     await state.set_state(TranslateModeStates.edit_word)
 
+
+@dp.callback_query_handler(lambda c: c.data in ['change_translation'], state=TranslateModeStates.choosing_edit_mode)
+#
+#   Нажата кнопка изменения перевода
+#
+async def cmd_change_translate(message: types.Message, state:FSMContext):
+
+    data = await state.get_data()
+    await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_t'], reply_markup=inline_kb_chancel,
+                           parse_mode=types.ParseMode.MARKDOWN_V2)
+    await state.set_state(TranslateModeStates.edit_translate)
+
 @dp.message_handler(state=TranslateModeStates.edit_word)
 #
 #   Получено новое слово
@@ -204,10 +216,11 @@ async def process_update_word(message: types.Message, state:FSMContext):
 
     await state.update_data(word_edit=message.text.lower(), translation_edit='')
     data = await state.get_data()
-    await bot.send_message(chat_id=message.from_user.id, text=f"{data['word']}, {data['word_edit']}, {data['translation_edit']}, {data['user_id']}", parse_mode="HTML")
+    #await bot.send_message(chat_id=message.from_user.id, text=f"{data['word']}, {data['word_edit']}, {data['translation_edit']}, {data['user_id']}", parse_mode="HTML")
 
     res = await update_word(data['word'], data['word_edit'], data['translation_edit'], data['user_id'])
     decode_res = json.loads(res)
+
 
     msg_text = fmt.text(
         fmt.text(fmt.hitalic(decode_res['msg']),
@@ -217,15 +230,34 @@ async def process_update_word(message: types.Message, state:FSMContext):
 
     await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML")
 
+    await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit)
+    await state.set_state(TranslateModeStates.input_word)
 
-    """
-    if decode_res['status'] == 1:
-        await bot.send_message(chat_id=message.from_user.id, text="➡️ _Вы можете сделать_\:", reply_markup=inline_kb_YN)
-        await state.set_state(TranslateModeStates.choosing_edit_mode)
-    else:
-        await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit)
-        await state.set_state(TranslateModeStates.input_word)
-    """
+
+@dp.message_handler(state=TranslateModeStates.edit_translate)
+#
+#   Получено новый перевод
+#
+async def process_update_translate(message: types.Message, state:FSMContext):
+
+    await state.update_data(word_edit='', translation_edit=message.text.lower())
+    data = await state.get_data()
+    #await bot.send_message(chat_id=message.from_user.id, text=f"{data['word']}, {data['word_edit']}, {data['translation_edit']}, {data['user_id']}", parse_mode="HTML")
+
+    res = await update_word(data['word'], data['word_edit'], data['translation_edit'], data['user_id'])
+    decode_res = json.loads(res)
+
+
+    msg_text = fmt.text(
+        fmt.text(fmt.hitalic(decode_res['msg']),
+        fmt.text(fmt.hbold(decode_res['word']), "=", fmt.hbold(decode_res['translation_base'])),
+        sep="\n")
+    )
+
+    await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML")
+
+    await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit)
+    await state.set_state(TranslateModeStates.input_word)
 
 
 
