@@ -1,5 +1,6 @@
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from keyboa import Keyboa
+from random import sample
 
 #Создаем 3 объекта-кнопки
 
@@ -8,6 +9,7 @@ inline_button_neuter = InlineKeyboardButton('Средний', callback_data='neu
 inline_button_femail= InlineKeyboardButton('Женский', callback_data='female')
 inline_button_exit= InlineKeyboardButton('Завершить игру', callback_data='exit')
 inline_button_add= InlineKeyboardButton('Добавить слово', callback_data='add_word_command')
+
 
 
 
@@ -127,3 +129,17 @@ in_btn_change_word = InlineKeyboardButton('\u2694\ufe0f Слово', callback_da
 in_btn_change_translation = InlineKeyboardButton('\u2694\ufe0f Перевод', callback_data='change_translation')
 in_kb_change_word = InlineKeyboardMarkup()
 in_kb_change_word.add(in_btn_change_word, in_btn_change_translation, inline_button_chancel)
+
+def genmarkup(data,true_trt): # передаём в функцию data
+
+    markup = InlineKeyboardMarkup() # создаём клавиатуру
+    markup.row_width = 2 # кол-во кнопок в строке
+    data.append(true_trt)
+    data_mix = sample(data, len(data))
+    for i in data_mix: # цикл для создания кнопок
+        markup.add(InlineKeyboardButton(i, callback_data=i)) #Создаём кнопки, i[1] - название, i[2] - каллбек дата
+    markup.add(inline_button_exit)
+    return markup #возвращаем клавиатуру
+
+
+

@@ -2,7 +2,7 @@ import json
 from aiogram import types
 from . app import dp, bot
 from aiogram.dispatcher import FSMContext
-from . states import TestStates, DeskriptionStates, TranslateModeStates
+from . states import TestStates, DeskriptionStates, TranslateModeStates, RandomModeStates
 from . data_fetcher import add_word, del_word, update_word
 from . keyboards import inline_kb_YN, inline_kb_chancel, inline_kb_exit, in_kb_main_menu, in_kb_change_word
 import aiogram.utils.markdown as fmt
@@ -139,6 +139,8 @@ async def button_exit_click_call_back(callback_query: types.CallbackQuery, state
                  sep="\n"))
 
     await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML", reply_markup=in_kb_main_menu)
+
+
 
 
 

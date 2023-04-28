@@ -34,6 +34,6 @@ class TranslateModeStates(StatesGroup):
     edit_word = State()
     edit_translate = State()
 
-class TenRandomModeStates(StatesGroup):
+class RandomModeStates(StatesGroup):
     input_word = State()
 

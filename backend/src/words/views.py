@@ -17,7 +17,7 @@ from django.db.models import Q
 class WordSerializator(serializers.ModelSerializer):
     class Meta:
         model = models.Words
-        fields = ['pk', 'gender', 'word', 'translation_base']
+        fields = ['pk', 'word', 'translation_base']
 
 class WordAPIView(generics.ListAPIView):
     queryset = models.Words.objects.all()
@@ -40,10 +40,29 @@ class WordAPIView(generics.ListAPIView):
 class RandomWord(APIView):
     #переопределяем медод get
     def get(self, *args, **kwargs):
+
+        random4traslations = []
         all_words = models.Words.objects.all()  #получаем все слова из БД
-        random_word = random.choice(all_words)
-        serialized_random_word = WordSerializator(random_word, many=False)
-        return Response(serialized_random_word.data)
+        word = random.choice(all_words)
+
+        for i in range(4):
+            all_words = models.Words.objects.all()
+            random_trt = random.choice(all_words)
+            random4traslations.append(random_trt.translation_base)
+
+        #serialized_random_word = WordSerializator(random_word, many=False)
+        #return Response(serialized_random_word.data)
+
+        return Response({
+            'status': 0,
+            'msg': 'Вот набор слов',
+            'word': word.word,
+            'translation_base': word.translation_base,
+            'random_trt': random4traslations
+        })
+
+
+
 
 #Создадим вью, которое будет приминать запрос пользователя и
 #отдавать следующее слово, сериализованное, т.е. пригодное
