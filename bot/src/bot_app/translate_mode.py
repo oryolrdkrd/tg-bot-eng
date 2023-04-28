@@ -3,7 +3,7 @@ from aiogram import types
 from . app import dp, bot
 from aiogram.dispatcher import FSMContext
 from . states import TestStates, DeskriptionStates, TranslateModeStates
-from . data_fetcher import add_word, del_word
+from . data_fetcher import add_word, del_word, update_word
 from . keyboards import inline_kb_YN, inline_kb_chancel, inline_kb_exit, in_kb_main_menu, in_kb_change_word
 import aiogram.utils.markdown as fmt
 from emoji import emojize
@@ -172,7 +172,7 @@ async def button_translater_click_call_back(callback_query: types.CallbackQuery,
 
     data = await state.get_data()
     state = dp.current_state(user=data['user_id'])
-    await state.set_state(TranslateModeStates.input_word)
+    await state.set_state(TranslateModeStates.choosing_edit_mode)
 
     msg_text = "_Что конкретно вы хотите изменить_\? \u2694\ufe0f \n" \
             "`\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- `\n" \
@@ -182,6 +182,50 @@ async def button_translater_click_call_back(callback_query: types.CallbackQuery,
 
     await bot.send_message(chat_id=data['user_id'], text=msg_text, reply_markup=in_kb_change_word)
 
+
+
+
+@dp.callback_query_handler(lambda c: c.data in ['change_word'], state=TranslateModeStates.choosing_edit_mode)
+#
+#   Нажата кнопка изменения слова
+#
+async def cmd_change_word(message: types.Message, state:FSMContext):
+
+    data = await state.get_data()
+    await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_w'], reply_markup=inline_kb_chancel,
+                           parse_mode=types.ParseMode.MARKDOWN_V2)
+    await state.set_state(TranslateModeStates.edit_word)
+
+@dp.message_handler(state=TranslateModeStates.edit_word)
+#
+#   Получено новое слово
+#
+async def process_update_word(message: types.Message, state:FSMContext):
+
+    await state.update_data(word_edit=message.text.lower(), translation_edit='')
+    data = await state.get_data()
+    await bot.send_message(chat_id=message.from_user.id, text=f"{data['word']}, {data['word_edit']}, {data['translation_edit']}, {data['user_id']}", parse_mode="HTML")
+
+    res = await update_word(data['word'], data['word_edit'], data['translation_edit'], data['user_id'])
+    decode_res = json.loads(res)
+
+    msg_text = fmt.text(
+        fmt.text(fmt.hitalic(decode_res['msg']),
+        fmt.text(fmt.hbold(decode_res['word']), "=", fmt.hbold(decode_res['translation_base'])),
+        sep="\n")
+    )
+
+    await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML")
+
+
+    """
+    if decode_res['status'] == 1:
+        await bot.send_message(chat_id=message.from_user.id, text="➡️ _Вы можете сделать_\:", reply_markup=inline_kb_YN)
+        await state.set_state(TranslateModeStates.choosing_edit_mode)
+    else:
+        await bot.send_message(message.from_user.id, text=MESSAGES['tm_in_w'], reply_markup=inline_kb_exit)
+        await state.set_state(TranslateModeStates.input_word)
+    """
 
 
 

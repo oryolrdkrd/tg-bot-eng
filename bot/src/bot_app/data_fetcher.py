@@ -3,7 +3,7 @@
 #если бы был синхронный, то использовал бы requests
 import aiohttp
 import ujson
-from . local_settings import WORDS_API_URL_RANDOM, WORDS_API_URL_ADDWORD, WORDS_API_URL_DEL_WORD
+from . local_settings import WORDS_API_URL_RANDOM, WORDS_API_URL_ADDWORD, WORDS_API_URL_DEL_WORD, WORDS_API_URL_UPDATEWORD
 import json
 
 #эта функция из модуля random_ten.py
@@ -35,3 +35,11 @@ async def del_word(word, user_id):
             # возвращаем полученный результат в виде JSON, как корутина отработает
             return await response.text()
 
+async def update_word(word, word_edit, translation_edit,  user_id):
+    #Стартуем асинхронную сессию
+    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
+        #делаем rest-запрос к бекэнду
+        #обращаемся к эндпоинту через асинхронного клиента
+        async with session.post(WORDS_API_URL_UPDATEWORD, json={'word':word, 'word_edit': word_edit,'translation_edit': translation_edit, 'user_id':user_id}) as response:
+            #возвращаем полученный результат в виде JSON, как корутина отработает
+            return await response.text()
