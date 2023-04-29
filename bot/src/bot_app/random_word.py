@@ -30,9 +30,13 @@ async def process_random_word_setstate_command(message: types.Message):
     prep_res = json.dumps(res)
     decode_res = json.loads(prep_res)
 
+    await state.update_data(word=decode_res['word'], translation_base=decode_res['translation_base'])
+    data = await state.get_data()
     msg_text = fmt.text(
         fmt.text("\n",
                  fmt.hbold(decode_res['word']),
+                 #fmt.hbold(data['word']),
+                 #fmt.hbold(data['translation_base']),
                  sep="\n"))
     kb = genmarkup(decode_res['random_trt'], decode_res['translation_base'])
     await bot.send_message(chat_id=message.from_user.id, text=msg_text, parse_mode="HTML", reply_markup=kb)
@@ -54,4 +58,60 @@ async def button_solve_tm_click_call_back(callback_query: types.CallbackQuery, s
     data = await state.get_data()
     #await state.reset_state()
     if callback_query.data.lower() == data['translation_base'].lower():
-        await bot.send_message(chat_id=data['user_id'], text=f"Верно\!  {callback_query.data} {data['translation_base']}", reply_markup=inline_kb_exit)
+        await bot.send_message(chat_id=data['user_id'], text="*Верно*\!", reply_markup=inline_kb_YN)
+
+
+@dp.callback_query_handler(lambda c: c.data in ['go'], state=[RandomModeStates.input_word])
+async def button_go_tr_click_call_back(callback_query: types.CallbackQuery, state:FSMContext):
+    data = await state.get_data()
+    state = dp.current_state(user=data['user_id'])
+    await state.update_data(user_id=data['user_id'])
+
+    data = await state.get_data()
+
+    await state.set_state(RandomModeStates.input_word)
+    msg_text = fmt.text(fmt.hitalic(MESSAGES['random_word']), sep="\n")
+    await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML")
+    res = await get_random()
+
+    prep_res = json.dumps(res)
+    decode_res = json.loads(prep_res)
+
+    await state.update_data(word=decode_res['word'])
+
+    msg_text = fmt.text(
+        fmt.text("\n",
+                 fmt.hbold(decode_res['word']),
+                 sep="\n"))
+    kb = genmarkup(decode_res['random_trt'], decode_res['translation_base'])
+    await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML", reply_markup=kb)
+    await state.update_data(translation_base=decode_res['translation_base'])
+
+@dp.callback_query_handler(lambda c: c.data in ['random_game'], state='*')
+async def button_go_tr_click_call_back(callback_query: types.CallbackQuery, state:FSMContext):
+    data = await state.get_data()
+    state = dp.current_state(user=data['user_id'])
+    await state.update_data(user_id=data['user_id'])
+
+    data = await state.get_data()
+
+    await state.set_state(RandomModeStates.input_word)
+    msg_text = fmt.text(fmt.hitalic(MESSAGES['random_word']), sep="\n")
+    await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML")
+    res = await get_random()
+
+    prep_res = json.dumps(res)
+    decode_res = json.loads(prep_res)
+
+    await state.update_data(word=decode_res['word'])
+
+    msg_text = fmt.text(
+        fmt.text("\n",
+                 fmt.hbold(decode_res['word']),
+                 sep="\n"))
+    kb = genmarkup(decode_res['random_trt'], decode_res['translation_base'])
+    await bot.send_message(chat_id=data['user_id'], text=msg_text, parse_mode="HTML", reply_markup=kb)
+    await state.update_data(translation_base=decode_res['translation_base'])
+
+
+

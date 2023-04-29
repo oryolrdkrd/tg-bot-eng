@@ -36,4 +36,6 @@ class TranslateModeStates(StatesGroup):
 
 class RandomModeStates(StatesGroup):
     input_word = State()
+    input_true = State()
+    input_false = State()
 
